@@ -43,7 +43,7 @@ void add_the_values_adjacent(Node **tab,int l, int c){
                     for(int z=j-1;z<=j+1;z++){
                         if(k >= 0 && k < l && z >= 0 && z < c && k!=z){
                             tab[k][z].value++;
-                            tab[k][z].is_visited=1;
+                            // tab[k][z].is_visited=1;
                         }
 
                     }
@@ -53,20 +53,56 @@ void add_the_values_adjacent(Node **tab,int l, int c){
     }
 
 }
-
 void Show_all(Node **tab,int l, int c){
     for (int i = 0; i < l; i++)
     {
         for (int j = 0; j < c; j++)
         {
-            if (tab[i][j].is_mine==1)printf("[m] ");
-            else if (tab[i][j].is_flagged==1)printf("[f] ");
-            else if (tab[i][j].is_visited==1)printf("[%d] ",tab[i][j].value);
-            else printf("[%d] ", tab[i][j].value);
+            
+            if (tab[i][j].is_flagged==1)printf("[f]");
+            else if (tab[i][j].is_visited==1){
+                if(tab[i][j].is_mine==1)printf("[m] ");
+                else printf("[%d] ",tab[i][j].value);
+            }
+            else printf("[%d:%d] ", i,j);
         }
         printf("\n");
     }
 }
+int Visit_Node(Node **tab,int l,int c,int x,int y){
+    if (tab[x][y].is_mine==1){
+        printf("u looose :( \n");
+        tab[x][y].is_visited=1;
+        return 0;
+    }else if(tab[x][y].is_visited==1){
+        printf("u have been here before :( choose other one !\n");
+    }else {
+        printf(" nice work :) \n");
+        tab[x][y].is_visited=1;
+        for (int k=x-1;k<=x+1;k++){
+                    for(int z=y-1;z<=y+1;z++){
+                        if(k >= 0 && k < l && z >= 0 && z < c ){
+                            if(tab[k][z].is_mine!=1){
+                                tab[k][z].is_visited=1;
+                            }
+                        }
+
+                    }
+                }
+    }
+    return 1;
+}
+void play_game(Node **tab,int l, int c){
+    int x,y,is_lose;
+    do {
+        printf("\n enter the x and y of the node you want to visit : ");
+        scanf("%d %d",&x,&y);
+        is_lose=Visit_Node(tab,10,10,x,y);
+        Show_all(tab,10,10);
+    }while(is_lose!=0);
+}
+
+
 int main(){
 
     Node **tab=malloc(10 * sizeof(Node*));
@@ -77,6 +113,7 @@ int main(){
     ajouter_matrice(tab,10,10);
     add_the_values_adjacent(tab,10,10);
     Show_all(tab,10,10);
+    play_game(tab,10,10);
     free (tab);
     return 0;
 }
