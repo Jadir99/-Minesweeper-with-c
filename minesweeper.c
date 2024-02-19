@@ -28,7 +28,7 @@ void ajouter_matrice(Node **tab,int l, int c){
     // remplire les cases qui sont des mines
     int ind1,ind2;
     srand(time(NULL));
-    for (int i = 0; i < l; i++){
+    for (int i = 0; i < l+10; i++){
         ind1=rand() % l;
         ind2=rand() % c;
         tab[ind1][ind2].value = -1;// indiquer qu'il y a une mine dans cette case
@@ -71,6 +71,23 @@ void Show_all(Node **tab,int l, int c){
         printf("\n");
     }
 }
+// this will check all the nodes adjacentes 
+void change_the_visited_state_of_the_node(Node **tab,int l, int c,int x,int y){
+    tab[x][y].is_visited=1;
+    if(tab[x][y].value==0){
+        for (int k=x-1;k<=x+1;k++){
+            for(int z=y-1;z<=y+1;z++){
+                if(k >= 0 && k < l && z >= 0 && z < c ){
+                    if(tab[k][z].is_mine!=1 && tab[k][z].is_visited==0){
+                        tab[k][z].is_visited=1;
+                        printf("%d: ",z);
+                        change_the_visited_state_of_the_node(tab,l,c,k,z);
+                    }
+                }
+            }
+        }
+    }
+}
 int Visit_Node(Node **tab,int l,int c,int x,int y){
     if (tab[x][y].is_mine==1){
         printf("u looose :( \n");
@@ -84,17 +101,7 @@ int Visit_Node(Node **tab,int l,int c,int x,int y){
         printf("u have been here before :( choose other one !\n");
     }else {
         printf(" nice work :) \n");
-        tab[x][y].is_visited=1;
-        for (int k=x-1;k<=x+1;k++){
-                    for(int z=y-1;z<=y+1;z++){
-                        if(k >= 0 && k < l && z >= 0 && z < c ){
-                            if(tab[k][z].is_mine!=1){
-                                tab[k][z].is_visited=1;
-                            }
-                        }
-
-                    }
-                }
+        change_the_visited_state_of_the_node(tab,l,c,x,y);
     }
     return 1;
 }
@@ -124,7 +131,7 @@ void play_game(Node **tab,int l, int c){
             AddFlag(tab,x,y);
             break;
         case 2:
-            is_lose=Visit_Node(tab,10,10,x,y);
+            is_lose=Visit_Node(tab,l,l,x,y);
             break;
         case 3:
             destroyFlag(tab,x,y);
@@ -134,22 +141,34 @@ void play_game(Node **tab,int l, int c){
             break;
         }
         
-        Show_all(tab,10,10);
+        Show_all(tab,l,l);
     }while(is_lose!=0 );
 }
 
 
 int main(){
 
-    Node **tab=malloc(10 * sizeof(Node*));
-    for (int i=0; i<10; i++){
-        tab[i]=malloc(10 * sizeof(Node));
+    
+    printf("hi welcome to the game of minesweeper :) \n");
+    int l;
+    do{
+        printf("chose the level of playing :\n");
+        printf("1-easy \n");
+        printf("2-medium \n");
+        printf("3-hard \n");
+        printf("choose between 1 2 and 3  \n");
+        scanf("%d",&l);
+    }while(l>3 && l<1);
+    l=l*10;
+    // creation of the matrix using pointers and malloc
+    Node **tab=malloc(l * sizeof(Node*));
+    for (int i=0; i<l; i++){
+        tab[i]=malloc(l * sizeof(Node));
     }
-
-    ajouter_matrice(tab,10,10);
-    add_the_values_adjacent(tab,10,10);
-    Show_all(tab,10,10);
-    play_game(tab,10,10);
+    ajouter_matrice(tab,l,l);
+    add_the_values_adjacent(tab,l,l);
+    Show_all(tab,l,l);
+    play_game(tab,l,l);
     free (tab);
     return 0;
 }
