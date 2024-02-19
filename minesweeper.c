@@ -80,7 +80,6 @@ void change_the_visited_state_of_the_node(Node **tab,int l, int c,int x,int y){
                 if(k >= 0 && k < l && z >= 0 && z < c ){
                     if(tab[k][z].is_mine!=1 && tab[k][z].is_visited==0){
                         tab[k][z].is_visited=1;
-                        printf("%d: ",z);
                         change_the_visited_state_of_the_node(tab,l,c,k,z);
                     }
                 }
